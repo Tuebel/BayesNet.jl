@@ -4,6 +4,7 @@
 
 .vscode
 build
+dev
 Manifest.toml
 
 coverage
