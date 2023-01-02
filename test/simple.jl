@@ -7,7 +7,7 @@
     a = SimpleNode(:a, rng, KernelUniform)
     @test isleaf(a)
     @test a(1, 2, 3) isa KernelUniform
-    @test Base.broadcastable(a) == Ref(a)
+    @test Base.broadcastable(a).x == a
 
     # Building graph
     b = SimpleNode(:b, rng, KernelExponential)
