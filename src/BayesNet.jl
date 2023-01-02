@@ -23,6 +23,7 @@ export SimpleNode
 
 export add_logdensity
 export evaluate
+export isleaf
 export parents
 export prior
 export sequentialize

@@ -163,7 +163,7 @@ parents(root::AbstractNode, nodes::AbstractNode...) =
 # Help to extract values from samples (NamedTuples)
 childvalues(::AbstractNode{<:Any,child_names}, nt::NamedTuple) where {child_names} = values(nt[child_names])
 varvalue(::AbstractNode{name}, nt::NamedTuple) where {name} = nt[name]
-is_leaf(node::AbstractNode) = children(node) == (;)
+isleaf(node::AbstractNode) = children(node) == (;)
 
 # Helpers for the concrete realization of the internal model by extracting the matching variables
 (node::AbstractNode)(x...) = model(node)(x...)
