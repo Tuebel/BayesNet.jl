@@ -28,7 +28,7 @@ end
 
 @testset "add_logdensity different array type" begin
     y = @inferred add_logdensity([1 2; 3 4; 5 6], CuArray([1 2]))
-    @test y .== CuArray([2 4; 4 6; 6 8])
+    @test y == [2 4; 4 6; 6 8]
     y = @inferred add_logdensity([1 2], CuArray([1 2; 3 4; 5 6]))
-    @test y .== CuArray([2 4; 4 6; 6 8])
+    @test y == [2 4; 4 6; 6 8]
 end
