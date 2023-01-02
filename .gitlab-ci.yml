@@ -3,7 +3,7 @@
 # All rights reserved.
 
 default:
-  image: julia:1.8.3
+  image: julia:latest
   before_script:
     - julia --project=@. -e 'import Pkg; Pkg.add(url=first(ARGS)); Pkg.build()' https://gitlab-ci-token:$CI_JOB_TOKEN@git-ce.rwth-aachen.de/diss/kerneldistributions.jl.git
 
