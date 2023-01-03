@@ -16,6 +16,7 @@ include("DeterministicNode.jl")
 include("ModifierNode.jl")
 include("SimpleNode.jl")
 
+export AbstractNode
 export BroadcastedNode
 export DeterministicNode
 export ModifierNode
