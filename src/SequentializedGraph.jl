@@ -32,7 +32,7 @@ Base.rand(graph::SequentializedGraph, dims::Integer...) = rand(graph, (;), dims.
 # unroll required for type stability
 @unroll function rand_unroll(graph, variables, dims::Integer...)
     @unroll for node in graph
-        if !(name(node) in keys(variables))
+        if !(nodename(node) in keys(variables))
             value = rand_barrier(node, variables, dims...)
             variables = merge_value(variables, node, value)
         end

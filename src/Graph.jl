@@ -14,7 +14,7 @@ abstract type AbstractNode{name,child_names} end
 # These fields are expected to be available in <:AbstractNode for the default implementations of rand_barrier and logdensityof_barrier
 children(node::AbstractNode) = node.children
 model(node::AbstractNode) = node.model
-name(::AbstractNode{name}) where {name} = name
+nodename(::AbstractNode{name}) where {name} = name
 rng(node::AbstractNode) = node.rng
 
 # Interface: define custom behavior by dispatching on a specialized node type
@@ -144,7 +144,7 @@ parents(root::AbstractNode, node_name) =
 
 parents(root::AbstractNode, nodes::AbstractNode...) =
     reduce(nodes; init=(;)) do accumulated, node
-        nt = parents(root, name(node))
+        nt = parents(root, nodename(node))
         # Merge only nodes which are not present in the evaluation model yet
         diff_nt = Base.structdiff(nt, accumulated)
         merge(accumulated, diff_nt)

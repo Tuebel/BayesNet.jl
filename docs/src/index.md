@@ -11,7 +11,7 @@ All implementations expect the following methods are expected to be implemented 
 ```julia
 children(node) = node.children
 model(node) = node.model
-name(::YourNode{name}) where {name} = name
+nodename(::YourNode{name}) where {name} = name
 rng(node) = node.rng
 ```
 For the specific behavior specify one or many of the following methods for your type:

@@ -27,7 +27,7 @@ export add_logdensity
 export children
 export evaluate
 export isleaf
-export name
+export nodename
 export parents
 export prior
 export rng
