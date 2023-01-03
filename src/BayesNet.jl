@@ -24,10 +24,13 @@ export SequentializedGraph
 export SimpleNode
 
 export add_logdensity
+export children
 export evaluate
 export isleaf
+export name
 export parents
 export prior
+export rng
 export sequentialize
 
 end # module BayesNet
