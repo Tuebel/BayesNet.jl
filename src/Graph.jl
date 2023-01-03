@@ -4,27 +4,17 @@
 
 """
     AbstractNode{name,child_names}
-Construct a directed acyclic graph (DAG), i.e. a Bayesian network, where each variable conditionally depends on a set of parent variables ([Wikpedia](https://en.wikipedia.org/wiki/Bayesian_network)).
-
-By convention, each node represents a variable and has a unique name associated to it.
-Exceptions can be made for specific node implementations, i.e. a modifier which post-processes the result of its child node.
-`name` is typically a symbol and `child_names` a tuple of symbols
+General graph traversing algorithms are defined on this type.
+`name` is typically a symbol and `child_names` a tuple of symbols.
 
 If a node is a leaf (has nod children), it does not depend on any other variables and should have a fully specified model.
-
-# Naming Convention
-Naming of parent-child relationship is reversed in a Bayesian network compared to DAGs.
-The probability of a child variable y given a parent variable x is p(y|x).
-However, node x is the parent of node y in the resulting graph x→y.
-
-Programming is done more intuitively using the graph & node notation, thus we use parent x → child y.
 """
 abstract type AbstractNode{name,child_names} end
 
 # These fields are expected to be available in <:AbstractNode for the default implementations of rand_barrier and logdensityof_barrier
 children(node::AbstractNode) = node.children
 model(node::AbstractNode) = node.model
-name(::AbstractNode{NAME}) where {NAME} = NAME
+name(::AbstractNode{name}) where {name} = name
 rng(node::AbstractNode) = node.rng
 
 # Interface: define custom behavior by dispatching on a specialized node type
