@@ -20,6 +20,7 @@ export AbstractNode
 export BroadcastedNode
 export DeterministicNode
 export ModifierNode
+export SequentializedGraph
 export SimpleNode
 
 export add_logdensity
