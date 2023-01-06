@@ -5,7 +5,6 @@
 .vscode
 build
 dev
-Manifest.toml
 
 coverage
 coverage_html

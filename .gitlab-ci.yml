@@ -5,7 +5,9 @@
 default:
   image: julia:latest
   before_script:
-    - julia --project=@. -e 'import Pkg; Pkg.add(url=first(ARGS)); Pkg.build();' https://gitlab-ci-token:$CI_JOB_TOKEN@git-ce.rwth-aachen.de/diss/kerneldistributions.jl.git
+    # Add repo dependencies
+    - sed -i "s|https://git-ce.|https://gitlab-ci-token:$CI_JOB_TOKEN@git-ce.|g" Manifest.toml
+    - julia --project=@. -e 'import Pkg; Pkg.instantiate(); Pkg.build();'
 
 test:
   stage: test
@@ -26,11 +28,10 @@ test:
 pages:
   stage: deploy
   script:
-    - julia --project=docs -e 'import Pkg; Pkg.add(url=first(ARGS)); Pkg.develop(path=pwd()); Pkg.instantiate();' https://gitlab-ci-token:$CI_JOB_TOKEN@git-ce.rwth-aachen.de/diss/kerneldistributions.jl.git
-    - julia --project=docs --color=yes docs/make.jl
+    - julia --project=@. -e 'using Pkg; Pkg.add("Documenter"); Pkg.instantiate(); include("docs/make.jl");'
     - mv docs/build public # move to the directory picked up by Gitlab pages
   artifacts:
     paths:
       - public
-  only:
-    - main
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
