@@ -6,14 +6,14 @@ version = "0.1.0"
 [deps]
 Bijectors = "76274a88-744f-5084-9051-94815aaf08c4"
 DensityInterface = "b429d917-457f-4dbc-8f4c-0cc954292b1d"
-KernelDistributions = "9994844f-d2c8-4ad1-b0b3-ac5ee308e667"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Unrolled = "9602ed7d-8fef-5bc8-8597-8f21381861e8"
 
 [extras]
 CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
+KernelDistributions = "9994844f-d2c8-4ad1-b0b3-ac5ee308e667"
 LocalCoverage = "5f6e1e16-694c-5876-87ef-16b5274f298e"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["CUDA", "LocalCoverage", "Test"]
+test = ["CUDA", "KernelDistributions", "LocalCoverage", "Test"]

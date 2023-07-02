@@ -2,7 +2,6 @@ module BayesNet
 
 using Bijectors
 using DensityInterface
-using KernelDistributions
 using Random
 using Unrolled
 
