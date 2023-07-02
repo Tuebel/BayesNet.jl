@@ -9,5 +9,3 @@ dev
 coverage
 coverage_html
 *.cov
-
-Manifest.toml
