@@ -1,13 +1,14 @@
 name = "BayesNet"
 uuid = "d9c86ec7-3148-4780-bde1-0046e5c48677"
 authors = ["Tim Redick <t.redick@irt.rwth-aachen.de>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 Bijectors = "76274a88-744f-5084-9051-94815aaf08c4"
 DensityInterface = "b429d917-457f-4dbc-8f4c-0cc954292b1d"
 KernelDistributions = "9994844f-d2c8-4ad1-b0b3-ac5ee308e667"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 Unrolled = "9602ed7d-8fef-5bc8-8597-8f21381861e8"
 
 [extras]

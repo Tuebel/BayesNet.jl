@@ -33,4 +33,7 @@ export prior
 export rng
 export sequentialize
 
+using Reexport
+@reexport import DensityInterface: logdensityof
+
 end # module BayesNet
