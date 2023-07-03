@@ -3,7 +3,7 @@
 # All rights reserved.
 
 default:
-  image: julia:latest
+  image: julia:1.8
   before_script:
     # Add repo dependencies
     - sed -i "s|https://git-ce.|https://gitlab-ci-token:$CI_JOB_TOKEN@git-ce.|g" Manifest.toml
@@ -12,8 +12,8 @@ default:
 test:
   stage: test
   script:
-    - apt update && apt install -y pipx lcov
-    - pipx install lcov_cobertura
+    - apt update && apt install -y python3-pip lcov
+    - pip install lcov_cobertura
     - julia --project=@. -e 'using Pkg; Pkg.add("LocalCoverage"); using LocalCoverage; cov = generate_coverage("BayesNet"; run_test = true); generate_xml(cov, "coverage.xml"); html_coverage(cov; dir="coverage_html"); report_coverage_and_exit(cov; target_coverage=70);'
   coverage: '/TOTAL.*│\s*(\d+)\%/'
   artifacts:
