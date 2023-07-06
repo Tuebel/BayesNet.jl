@@ -7,7 +7,7 @@
 Broadcasts the parameters of the children using a BroadcastedDistribution.
 Also takes care of matching the dimensions for broadcasting multiple samples.
 """
-struct BroadcastedNode{name,child_names,C<:NamedTuple{child_names},R<:AbstractRNG,M,N,D<:Tuple{Vararg{Dims}}} <: AbstractNode{name,child_names}
+struct BroadcastedNode{name,child_names,C<:Tuple{Vararg{AbstractNode}},R<:AbstractRNG,M,N,D<:Tuple{Vararg{Dims}}} <: AbstractNode{name,child_names}
     children::C
     rng::R
     # Must be function to avoid UnionAll type instabilities
@@ -17,14 +17,14 @@ struct BroadcastedNode{name,child_names,C<:NamedTuple{child_names},R<:AbstractRN
 end
 
 # Convenience constructor for moving name to the parametric type.
-BroadcastedNode(name::Symbol, rng::R, model::M, model_dims::Dims{N}, children::C, child_sizes::D) where {child_names,C<:NamedTuple{child_names},R<:AbstractRNG,M,N,D<:Tuple{Vararg{Dims}}} = BroadcastedNode{name,child_names,C,R,M,N,D}(children, rng, model, model_dims, child_sizes)
+BroadcastedNode(name::Symbol, rng::R, model::M, model_dims::Dims{N}, children::C, child_sizes::D) where {C<:Tuple{Vararg{AbstractNode}},R<:AbstractRNG,M,N,D<:Tuple{Vararg{Dims}}} = BroadcastedNode{name,nodename.(children),C,R,M,N,D}(children, rng, model, model_dims, child_sizes)
 
 """
     BroadcastedNode(name, rng, distribution, children)
 Construct a node which automatically broadcasts the `distribution` over the parameters given by the `children`.
 The resulting `BroadcastedDistribution` acts like a product distribution, reducing the ndims for the minimal realization of the distribution given the `children`.
 """
-function BroadcastedNode(name::Symbol, rng::AbstractRNG, distribution::Base.Callable, children::NamedTuple)
+function BroadcastedNode(name::Symbol, rng::AbstractRNG, distribution::Base.Callable, children::Tuple)
     # Generate one sample to calculate dimensions of the node and children. Empty Dims because they are unknown and don't make a difference for a single sample generation.
     sacrifice_model = broadcast_model(distribution, ())
     sacrifice_child_sizes = ntuple(_ -> (), length(children))
@@ -43,7 +43,7 @@ end
 Construct the node as leaf (no children) by broadcasting the `distribution` over the `params`.
 The resulting `BroadcastedDistribution` acts like a product distribution, reducing the ndims of the `params`.
 """
-BroadcastedNode(name::Symbol, rng::AbstractRNG, distribution, params...) = BroadcastedNode(name, rng, BroadcastedDistribution(distribution, params...), param_dims(params...), (;), ())
+BroadcastedNode(name::Symbol, rng::AbstractRNG, distribution, params...) = BroadcastedNode(name, rng, BroadcastedDistribution(distribution, params...), param_dims(params...), (), ())
 
 
 # WARN Manipulated function not type stable for Type as arg
@@ -55,9 +55,9 @@ broadcast_model(::Type{T}, dims) where {T} = (x...) -> BroadcastedDistribution(T
 broadcast_model(fn::Function, dims) = (x...) -> BroadcastedDistribution(fn, dims, x...)
 
 # Override generic BayesNet.jl behavior by inserting additional dims as required for broadcasting
-function childvalues(node::BroadcastedNode{<:Any,childnames}, nt::NamedTuple) where {childnames}
-    child_values = values(nt[childnames])
-    # WARN Broadcasting not type stable?
+function childvalues(node::BroadcastedNode{<:Any,child_names}, nt::NamedTuple) where {child_names}
+    child_values = values(nt[child_names])
+    # Broadcasting not type stable?
     map(child_values, node.child_sizes) do cv, cs
         insertdims(cv, cs, node.model_dims)
     end
@@ -82,7 +82,7 @@ insertdims(A, ::Dims, ::Dims{0}) = A
 insertdims(A::Real, ::Dims, ::Dims{0}) = A
 
 function insertdims(A, original::Dims{O}, ::Dims{B}) where {O,B}
-    # WARN fill array is not type stable
+    # fill array is not type stable
     fill_ones = ntuple(_ -> 1, B - O)
     # Dimension of multiple samples
     remaining = size(A)[O+1:end]

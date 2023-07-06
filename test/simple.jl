@@ -11,8 +11,8 @@
 
     # Building graph
     b = SimpleNode(:b, rng, KernelExponential)
-    c = SimpleNode(:c, rng, KernelNormal, (; a=a, b=b))
-    d = SimpleNode(:d, rng, KernelNormal, (; c=c, b=b))
+    c = SimpleNode(:c, rng, KernelNormal, (a, b))
+    d = SimpleNode(:d, rng, KernelNormal, (c, b))
     @test isnothing(show(d))
 
     # rand

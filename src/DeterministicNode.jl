@@ -8,12 +8,16 @@ This node only takes part in the generative `rand` process but is not random.
 Instead a deterministic function `fn` is provided, e.g. rendering an image for a pose.
 It does not change the joint logdensity of the graph by returning a logdensity of zero.
 """
-struct DeterministicNode{name,child_names,M,N<:NamedTuple{child_names}} <: AbstractNode{name,child_names}
+struct DeterministicNode{name,child_names,M,C<:Tuple{Vararg{AbstractNode}}} <: AbstractNode{name,child_names}
     fn::M
-    children::N
+    children::C
 end
 
-DeterministicNode(name::Symbol, fn::M, children::N) where {child_names,M,N<:NamedTuple{child_names}} = DeterministicNode{name,child_names,M,N}(fn, children)
+# Leaf node
+DeterministicNode(name::Symbol, fn::M) where {M} = DeterministicNode{name,(),M,Tuple{}}(fn, ())
+
+# Parent node
+DeterministicNode(name::Symbol, fn::M, children::C) where {M,C<:Tuple{Vararg{AbstractNode}}} = DeterministicNode{name,nodename.(children),M,C}(fn, children)
 
 rand_barrier(node::DeterministicNode, variables::NamedTuple, _...) = evaluate_barrier(node, variables)
 evaluate_barrier(node::DeterministicNode, variables::NamedTuple) = node.fn(childvalues(node, variables)...)

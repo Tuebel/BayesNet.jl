@@ -5,8 +5,11 @@
 """
     ModifierNode
 Wraps another node and represents the same variable as the `wrapped` node.
-`rand(model, wrapped_value)` and `logdensityof(model, wrapped_ℓ)` allow to modify the value returned by the wrapped node by passing the returned value to the model.
-When traversing the graph, only the wrapped node is returned by `nodes`. 
+For the model create a new type e.g. ModifierModel and implement:
+* `rand(rng,::AbstractRNG, model::ModifierModel, x)`, where `x` is a randomly drawn value from the wrapped node.
+* `logdensityof(model::ModifierModel, x, ℓ)`, where `x` is the value of the evaluated variable and `ℓ` the logdensity returned by the wrapped model
+
+When traversing the graph, only the wrapped node is returned. 
 """
 struct ModifierNode{name,child_names,N<:AbstractNode{name,child_names},R<:AbstractRNG,M} <: AbstractNode{name,child_names}
     wrapped_node::N

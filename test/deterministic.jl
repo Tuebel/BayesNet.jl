@@ -11,7 +11,7 @@
     b = BroadcastedNode(:b, rng, KernelExponential, b_params)
 
     fn(a, ::Any) = a
-    c = DeterministicNode(:c, fn, (; a=a, b=b))
+    c = DeterministicNode(:c, fn, (a, b))
 
     nt = rand(c)
     @test nt.c isa AbstractArray{Float32,1}
@@ -37,7 +37,7 @@
     @test nt == (; a=1, b=2, c=1)
 
     # Deterministic as leaf
-    d = DeterministicNode(:d, () -> fill(42, 42), (;))
+    d = DeterministicNode(:d, () -> fill(42, 42))
     s = @inferred rand(d)
     @test logdensityof(d, s) == 0
     @test s.d == fill(42, 42)

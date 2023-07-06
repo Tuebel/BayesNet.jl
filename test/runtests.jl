@@ -18,7 +18,6 @@ Random.seed!(curng, 42)
 # TODO replace in test files
 rngs = [cpurng, curng]
 
-# BUG CUDA does weird stuff (wrong calculations, minimum is always 0.0) only on my laptop during Pkg.test() not when include("runtests.jl")
 CUDA.allowscalar(false)
 
 include("math.jl")

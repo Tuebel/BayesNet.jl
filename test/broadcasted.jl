@@ -30,7 +30,7 @@
     b_params = array_for_rng(rng, Float32, 3, 4)
     b_params .= 1
     b = BroadcastedNode(:b, rng, KernelExponential, b_params)
-    c = BroadcastedNode(:c, rng, KernelNormal, (; a=a, b=b))
+    c = BroadcastedNode(:c, rng, KernelNormal, (a, b))
 
     # single rand
     nt = rand(c)
@@ -48,7 +48,7 @@
     @test size(ℓ) == (2,)
 
     # logdensityof for single sample
-    d = BroadcastedNode(:d, rng, KernelNormal, (; c=c, b=b))
+    d = BroadcastedNode(:d, rng, KernelNormal, (c, b))
     nt = rand(d)
     ℓ = logdensityof(d, nt)
     @test ℓ isa Float32

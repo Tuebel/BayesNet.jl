@@ -12,8 +12,8 @@ DensityInterface.logdensityof(::SimpleModifierModel, ::Any, ℓ) = ℓ + one(ℓ
 @testset "ModifierNode, RNG: $rng" for rng in rngs
     a = SimpleNode(:a, rng, KernelUniform)
     b = SimpleNode(:b, rng, KernelExponential)
-    c = SimpleNode(:c, rng, KernelNormal, (; a=a, b=b))
-    d = SimpleNode(:d, rng, KernelNormal, (; c=c, b=b))
+    c = SimpleNode(:c, rng, KernelNormal, (a, b))
+    d = SimpleNode(:d, rng, KernelNormal, (c, b))
     d_mod = ModifierNode(d, rng, SimpleModifierModel)
 
     nt = rand(d_mod)

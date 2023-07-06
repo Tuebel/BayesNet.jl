@@ -12,10 +12,34 @@ If a node is a leaf (has nod children), it does not depend on any other variable
 abstract type AbstractNode{name,child_names} end
 
 # These fields are expected to be available in <:AbstractNode for the default implementations of rand_barrier and logdensityof_barrier
+
+"""
+    children(node)
+Returns a tuple of the child nodes
+"""
 children(node::AbstractNode) = node.children
+"""
+    model(node)
+Returns the callable model of the node.
+Note that a Callable struct are not type stable and should be wrapped by a (anonymous) function.
+"""
 model(node::AbstractNode) = node.model
-nodename(::AbstractNode{name}) where {name} = name
+"""
+    model(node)
+Returns the random number generator of the node.
+"""
 rng(node::AbstractNode) = node.rng
+
+"""
+    nodename(node)
+Extracts the name of the node
+"""
+nodename(::AbstractNode{name}) where {name} = name
+"""
+    nodename(node)
+Extracts a tuple of the names of the child nodes.
+"""
+childnames(::AbstractNode{<:Any,names}) where {names} = names
 
 # Interface: define custom behavior by dispatching on a specialized node type
 # Also help with type stability
@@ -26,7 +50,6 @@ rand_barrier(node::AbstractNode, variables::NamedTuple, dims...) = rand(rng(node
 
 # Do only evaluate DeterministicNodes
 evaluate_barrier(node::AbstractNode, variables::NamedTuple) = varvalue(node, variables)
-# evaluate_barrier(::AbstractNode, ::NamedTuple) = nothing
 
 logdensityof_barrier(node::AbstractNode, variables::NamedTuple) = logdensityof(node(variables), varvalue(node, variables))
 
@@ -126,7 +149,7 @@ Returns a SequentializedGraph for the parents for the given `node_name` up until
 parents(root::AbstractNode, node_name) =
     traverse(root, (;)) do current, variables
         # current node is parent
-        if node_name in keys(children(current))
+        if node_name in childnames(current)
             return current
         end
         # one of the child nodes is parent
@@ -134,7 +157,7 @@ parents(root::AbstractNode, node_name) =
             return nothing
         end
         is_parent = mapreduce(|, keys(variables)) do var_name
-            var_name in keys(children(current))
+            var_name in childnames(current)
         end
         if is_parent
             return current
@@ -153,7 +176,7 @@ parents(root::AbstractNode, nodes::AbstractNode...) =
 # Help to extract values from samples (NamedTuples)
 childvalues(::AbstractNode{<:Any,child_names}, nt::NamedTuple) where {child_names} = values(nt[child_names])
 varvalue(::AbstractNode{name}, nt::NamedTuple) where {name} = nt[name]
-isleaf(node::AbstractNode) = children(node) == (;)
+isleaf(node::AbstractNode) = node |> children |> isempty
 
 # Helpers for the concrete realization of the internal model by extracting the matching variables
 (node::AbstractNode)(x...) = model(node)(x...)

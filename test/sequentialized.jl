@@ -6,8 +6,8 @@
     # Build & sequentialize graph
     a = SimpleNode(:a, rng, KernelUniform)
     b = SimpleNode(:b, rng, KernelExponential)
-    c = SimpleNode(:c, rng, KernelNormal, (; a=a, b=b))
-    d = SimpleNode(:d, rng, KernelNormal, (; c=c, b=b))
+    c = SimpleNode(:c, rng, KernelNormal, (a, b))
+    d = SimpleNode(:d, rng, KernelNormal, (c, b))
     seq_graph = sequentialize(d)
     @test seq_graph == (; a=a, b=b, c=c, d=d)
 
@@ -29,8 +29,8 @@
     a_params .= 1
     a = BroadcastedNode(:a, rng, KernelUniform, 0, a_params)
     b = BroadcastedNode(:b, rng, KernelExponential, 1.0f0)
-    c = BroadcastedNode(:c, rng, KernelNormal, (; a=a, b=b))
-    d = BroadcastedNode(:d, rng, KernelNormal, (; c=c, b=b))
+    c = BroadcastedNode(:c, rng, KernelNormal, (a, b))
+    d = BroadcastedNode(:d, rng, KernelNormal, (c, b))
     seq_graph = sequentialize(d)
 
     nt = @inferred rand(seq_graph)

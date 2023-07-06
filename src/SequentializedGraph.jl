@@ -5,7 +5,7 @@
 """
     SequentializedGraph
 A graph that can be executed in sequence compared to traversing the graph.
-Since Bayseian networks are DAGs, they can always be sequentialized.
+Since Bayesian networks are DAGs, they can always be sequentialized.
 This allows to implement type stable functions by unrolling the loop over the sequence.
 """
 const SequentializedGraph = NamedTuple{<:Any,<:Tuple{Vararg{AbstractNode}}}

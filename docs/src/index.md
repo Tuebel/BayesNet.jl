@@ -9,10 +9,9 @@ AbstractNode
 ```
 All implementations expect the following methods are expected to be implemented or the fields of the default implementation to be available:
 ```julia
-children(node) = node.children
-model(node) = node.model
-nodename(::YourNode{name}) where {name} = name
-rng(node) = node.rng
+children(node)::Tuple{Vararg{<:AbstractNode}} = node.children
+model(node)::Function = node.model
+rng(node)::AbstractRNG = node.rng
 ```
 For the specific behavior specify one or many of the following methods for your type:
 ```julia
