@@ -8,6 +8,8 @@ using KernelDistributions
 using Random
 using Test
 
+rngs = (Random.default_rng(),)
+
 # Minimal implementation to test whether the values get modified and the rest of the graph is traversed
 struct SimpleModifierModel end
 # Construct with same args as wrapped model
