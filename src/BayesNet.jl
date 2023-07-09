@@ -19,7 +19,7 @@ include("SimpleNode.jl")
 export AbstractNode
 export BroadcastedNode
 export DeterministicNode
-export ModifierNode
+export ModifierNode, SumLogdensityModifier
 export SequentializedGraph
 export SimpleNode
 
