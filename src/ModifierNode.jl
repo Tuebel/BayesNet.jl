@@ -14,12 +14,8 @@ When traversing the graph, only the wrapped node is returned.
 struct ModifierNode{name,child_names,N<:AbstractNode{name,child_names},R<:AbstractRNG,M} <: AbstractNode{name,child_names}
     wrapped_node::N
     rng::R
+    model::M
 end
-
-ModifierNode(wrapped_node::N, rng::R, model) where {name,child_names,N<:AbstractNode{name,child_names},R<:AbstractRNG} = ModifierNode{name,child_names,N,R,model}(wrapped_node, rng)
-
-# Type stability
-model(::ModifierNode{<:Any,<:Any,<:Any,<:Any,M}) where {M} = M
 
 children(node::ModifierNode) = (node.wrapped_node,)
 
