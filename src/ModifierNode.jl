@@ -33,10 +33,15 @@ bijector_barrier(node::ModifierNode, variables::NamedTuple) = bijector_barrier(n
 
 """
     SumLogdensityModifier
-Sums up the logdensities of the wrapped_node, e.g. if multiple data points are available for a variable.
+Sums up the logdensities of the wrapped_node along dims, e.g. if multiple data points are available for a variable.
 Random generation is not modified.
 """
-struct SumLogdensityModifier end
-SumLogdensityModifier(args...) = SumLogdensityModifier()
+struct SumLogdensityModifier{N}
+    dims::Dims{N}
+end
+SumLogdensityModifier(dims) = SumLogdensityModifier(dims)
 Base.rand(::AbstractRNG, model::SumLogdensityModifier, x) = x
-DensityInterface.logdensityof(::SumLogdensityModifier, x, ℓ) = sum(ℓ)
+
+sum_(x; dims) = dropdims(sum(x; dims=dims); dims=dims)
+sum_(x::Number; dims) = x
+DensityInterface.logdensityof(modifier::SumLogdensityModifier, x, ℓ) = sum_and_dropdims(ℓ, modifier.dims)
