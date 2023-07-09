@@ -30,7 +30,6 @@ export isleaf
 export nodename
 export parents
 export prior
-export rng
 export sequentialize
 
 using Reexport
