@@ -9,11 +9,12 @@ using Random
 using Test
 
 DATA_SIZES = ((), (1,), (3,), (3, 4))
-a = BroadcastedNode(:a, rng, KernelNormal, 1.0f0, 2.0f0)
-b = BroadcastedNode(:b, rng, KernelExponential, [1.0f0, 2.0f0])
-c = BroadcastedNode(:c, rng, KernelNormal, (a, b))
 
 @testset "ObservationNode single sample, RNG: $rng, DATA_SIZE: $data_size" for rng in rngs, data_size in DATA_SIZES
+    a = BroadcastedNode(:a, rng, KernelNormal, 1.0f0, 2.0f0)
+    b = BroadcastedNode(:b, rng, KernelExponential, [1.0f0, 2.0f0])
+    c = BroadcastedNode(:c, rng, KernelNormal, (a, b))
+
     # Condition on data, aka override the randomly generated values with the observed ones
     data = rand(rng, BroadcastedDistribution(KernelNormal, 0, [2.0f0, 3.0f0]), data_size...)
     @test size(data) == (2, data_size...)
@@ -38,6 +39,10 @@ end;
 
 SAMPLE_SIZE = ((1,), (3,), (5, 6))
 @testset "ObservationNode multiple observations, RNG: $rng, DATA_SIZE: $data_size, SAMPLE_SIZE: $sample_size" for rng in rngs, data_size in DATA_SIZES, sample_size in SAMPLE_SIZE
+    a = BroadcastedNode(:a, rng, KernelNormal, 1.0f0, 2.0f0)
+    b = BroadcastedNode(:b, rng, KernelExponential, [1.0f0, 2.0f0])
+    c = BroadcastedNode(:c, rng, KernelNormal, (a, b))
+
     # Condition on data, aka override the randomly generated values with the observed ones
     data = rand(rng, BroadcastedDistribution(KernelNormal, 0, [2.0f0, 3.0f0]), data_size...)
     @test size(data) == (2, data_size...)
