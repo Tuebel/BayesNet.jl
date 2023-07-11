@@ -89,8 +89,8 @@ end
 
 # For initialization
 insertdims(A, child_size::Dims, model_dims::Dims{0}) = A
-# Use general implementation by wrapping scalars in an Array
-insertdims(A::Real, child_size::Dims, model_dims::Dims) = insertdims([A], (child_size..., 1), model_dims)
+# CUDA compatibility - do not wrap in single element vector
+insertdims(A::Real, child_size::Dims, model_dims::Dims) = A
 # Avoid ambiguities
 insertdims(A::Real, child_size::Dims, model_dims::Dims{0}) = A
 

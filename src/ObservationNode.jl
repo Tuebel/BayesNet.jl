@@ -62,6 +62,8 @@ function insert_observation_dims(A, model_dims::Dims{M}, observation_size::Dims{
     multi_size = size(A)[M+1:end]
     reshape(A, single_size..., fill_ones..., multi_size...)
 end
+# CUDA compatibility - do not wrap in vector
+insert_observation_dims(A::Real, model_dims::Dims, observation_size::Dims) = A
 
 """
     observation_dims(model_dims::Dims, observation_size::Dims)
