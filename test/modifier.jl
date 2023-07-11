@@ -29,7 +29,7 @@ DensityInterface.logdensityof(::SimpleModifierModel, ::Any, ℓ) = ℓ + one(ℓ
     @test values(bij) == (bijector(KernelUniform()), bijector(KernelExponential()), bijector(KernelNormal()), bijector(KernelNormal()))
 end
 
-# @testset "SumLogdensityModifier, RNG: $rng" for rng in rngs
+@testset "SumLogdensityModifier, RNG: $rng" for rng in rngs
     N = 42
     a = SimpleNode(:a, rng, KernelNormal, 1.0f0, 2.0f0)
     b = SimpleNode(:b, rng, KernelExponential)

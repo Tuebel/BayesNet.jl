@@ -14,12 +14,14 @@ include("SequentializedGraph.jl")
 include("BroadcastedNode.jl")
 include("DeterministicNode.jl")
 include("ModifierNode.jl")
+include("ObservationNode.jl")
 include("SimpleNode.jl")
 
 export AbstractNode
 export BroadcastedNode
 export DeterministicNode
 export ModifierNode, SumLogdensityModifier
+export ObservationNode
 export SequentializedGraph
 export SimpleNode
 

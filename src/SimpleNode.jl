@@ -4,7 +4,7 @@
 
 """
     SimpleNode(name, rng, distribution_type, children)
-Basic implementation of an AbstractNode:
+Basic implementation of an AbstractNode with the main purpose of unit testing the graph library.
 Represents a named variable and depends on child nodes.
 Does not support logdensityof multiple samples, since no broadcasting or reduction is implemented.
 """

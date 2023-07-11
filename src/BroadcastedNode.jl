@@ -6,6 +6,8 @@
     BroadcastedNode
 Broadcasts the parameters of the children using a BroadcastedDistribution.
 Also takes care of matching the dimensions for broadcasting multiple samples.
+`model` is a function which generates a BroadcastedDistribution given the nodes child values as parameters.
+`child_sizes` are the dims of a single sample from the child node and `model_dims` the dims of the broadcasted distribution which results from a single sample of all child nodes.
 """
 struct BroadcastedNode{name,child_names,C<:Tuple{Vararg{AbstractNode}},R<:AbstractRNG,M,N,D<:Tuple{Vararg{Dims}}} <: AbstractNode{name,child_names}
     children::C
@@ -56,6 +58,7 @@ broadcast_model(fn::Function, dims) = (x...) -> BroadcastedDistribution(fn, dims
 
 # Override generic BayesNet.jl behavior by inserting additional dims as required for broadcasting
 function childvalues(node::BroadcastedNode{<:Any,child_names}, nt::NamedTuple) where {child_names}
+    # Do not use childvalues(node, nt) → StackOverflow endless recursion
     child_values = values(nt[child_names])
     # Broadcasting not type stable?
     map(child_values, node.child_sizes) do cv, cs
@@ -64,9 +67,9 @@ function childvalues(node::BroadcastedNode{<:Any,child_names}, nt::NamedTuple) w
 end
 
 """
-    insertdims(A, child_sizes, dist_dims)
+    insertdims(A, child_size, model_dims)
 Reshape `A` by inserting dims of length one to make it compatible for broadcasting multiple random samples of differently shaped children.
-`child_sizes` are the dims of a single sample from the child node and `dist_dims` the dims of the broadcasted distribution which results from a single sample of all child nodes.
+`child_size` are the dims of a single sample from the child node and `model_dims` the dims of the broadcasted distribution which results from a single sample of all child nodes.
 
 # Rationale
 When proposing multiple samples, originally matching dims of the BroadcastedDistribution do not work anymore.
@@ -75,16 +78,21 @@ Julia expands dimensions of length one when broadcasting, so reshaping the array
 https://freecontent.manning.com/vectorizing-your-code-using-broadcasting/
 https://discourse.julialang.org/t/designating-the-axes-for-broadcasting/29203/2
 """
-insertdims(A::Real, ::Dims, ::Dims) = A
-# For initialization
-insertdims(A, ::Dims, ::Dims{0}) = A
-# Avoid ambiguities
-insertdims(A::Real, ::Dims, ::Dims{0}) = A
-
-function insertdims(A, original::Dims{O}, ::Dims{B}) where {O,B}
+function insertdims(A, child_size::Dims{O}, model_dims::Dims{B}) where {O,B}
     # fill array is not type stable
     fill_ones = ntuple(_ -> 1, B - O)
     # Dimension of multiple samples
     remaining = size(A)[O+1:end]
-    reshape(A, original..., fill_ones..., remaining...)
+    reshape(A, child_size..., fill_ones..., remaining...)
 end
+
+
+# For initialization
+insertdims(A, child_size::Dims, model_dims::Dims{0}) = A
+# Use general implementation by wrapping scalars in an Array
+insertdims(A::Real, child_size::Dims, model_dims::Dims) = insertdims([A], (child_size..., 1), model_dims)
+# Avoid ambiguities
+insertdims(A::Real, child_size::Dims, model_dims::Dims{0}) = A
+
+# Other
+model_dims(node::BroadcastedNode) = node.model_dims

@@ -2,6 +2,8 @@
 # Copyright (c) 2022, Institute of Automatic Control - RWTH Aachen University
 # All rights reserved.
 
+# TODO not intuitive, it is probably easier to implement your own node similar to the ObservationNode
+
 """
     ModifierNode
 Wraps another node and represents the same variable as the `wrapped` node.
@@ -31,6 +33,7 @@ end
 
 bijector_barrier(node::ModifierNode, variables::NamedTuple) = bijector_barrier(node.wrapped_node, variables)
 
+# TODO remove
 """
     SumLogdensityModifier
 Sums up the logdensities of the wrapped_node along dims, e.g. if multiple data points are available for a variable.

@@ -11,6 +11,17 @@ If a node is a leaf (has nod children), it does not depend on any other variable
 """
 abstract type AbstractNode{name,child_names} end
 
+"""
+    nodename(node)
+Extracts the name of the node
+"""
+nodename(::AbstractNode{name}) where {name} = name
+"""
+    childnames(node)
+Extracts a tuple of the names of the child nodes.
+"""
+childnames(::AbstractNode{<:Any,names}) where {names} = names
+
 # These fields are expected to be available in <:AbstractNode for the default implementations of rand_barrier and logdensityof_barrier
 
 """
@@ -29,17 +40,6 @@ model(node::AbstractNode) = node.model
 Returns the random number generator of the node.
 """
 rng(node::AbstractNode) = node.rng
-
-"""
-    nodename(node)
-Extracts the name of the node
-"""
-nodename(::AbstractNode{name}) where {name} = name
-"""
-    nodename(node)
-Extracts a tuple of the names of the child nodes.
-"""
-childnames(::AbstractNode{<:Any,names}) where {names} = names
 
 # Interface: define custom behavior by dispatching on a specialized node type
 # Also help with type stability

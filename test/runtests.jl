@@ -16,6 +16,7 @@ Random.seed!(cpurng, 42)
 curng = CUDA.default_rng()
 Random.seed!(curng, 42)
 # TODO replace in test files
+# rngs = [cpurng]
 rngs = [cpurng, curng]
 
 CUDA.allowscalar(false)
@@ -26,3 +27,4 @@ include("sequentialized.jl")
 include("broadcasted.jl")
 include("deterministic.jl")
 include("modifier.jl")
+include("observation.jl")
