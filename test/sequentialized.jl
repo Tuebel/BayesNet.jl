@@ -2,6 +2,11 @@
 # Copyright (c) 2022, Institute of Automatic Control - RWTH Aachen University
 # All rights reserved. 
 
+using BayesNet
+using KernelDistributions
+using Random
+using Test
+
 @testset "SequentializedGraph, RNG: $rng" for rng in rngs
     # Build & sequentialize graph
     a = SimpleNode(:a, rng, KernelUniform)
@@ -10,6 +15,16 @@
     d = SimpleNode(:d, rng, KernelNormal, (c, b))
     seq_graph = sequentialize(d)
     @test seq_graph == (; a=a, b=b, c=c, d=d)
+
+    # parent extraction similar to simple.jl
+    parent_a = parents(seq_graph, :a)
+    @test parent_a == (; c=c, d=d)
+    parent_c = parents(seq_graph, :c)
+    @test parent_c == (; d=d)
+    parent_ac = parents(seq_graph, a, c)
+    @test parent_ac == (; c=c, d=d)
+    parent_ba = parents(seq_graph, b, a)
+    @test parent_ba == (; c=c, d=d)
 
     # Type stable bijectors
     bij = @inferred bijector(seq_graph)

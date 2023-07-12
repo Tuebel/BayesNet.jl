@@ -143,8 +143,8 @@ Returns a SequentializedGraph for the prior
 prior(node::AbstractNode{name}) where {name} = Base.structdiff(sequentialize(node), (; name => ()))
 
 """
-    parents(root, node_name)
-Returns a SequentializedGraph for the parents for the given `node_name` up until the `root` node.
+    parents(root::AbstractNode, node_name)
+Returns a SequentializedGraph for the parents of the `node_name` node up until the `root` node.
 """
 parents(root::AbstractNode, node_name) =
     traverse(root, (;)) do current, variables

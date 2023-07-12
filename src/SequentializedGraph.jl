@@ -77,3 +77,41 @@ function Bijectors.bijector(graph::SequentializedGraph)
     variables = rand(graph)
     map(x -> bijector_barrier(x, variables), graph)
 end
+
+"""
+    parents(graph::SequentializedGraph, node_name)
+Returns a SequentializedGraph for the parents of the `node_name` from the sequentialized `graph`.
+"""
+function parents(graph::SequentializedGraph{names}, node_name) where {names}
+    # only nodes right of node_name might be parents
+    node_idx = findfirst(x -> x == node_name, names)
+    right = graph[names[node_idx:end]]
+    # unrelated nodes might be in the list
+    parents = ()
+    for node in right
+        # Add direct parent
+        if any(x -> x == node_name, childnames(node))
+            parents = (parents..., node)
+            # only add once
+            continue
+        end
+        # Add parent of parent
+        for parent_node in parents
+            if any(x -> x == nodename(parent_node), childnames(node))
+                parents = (parents..., node)
+                # only add once
+                break
+            end
+        end
+    end
+    parent_names = nodename.(parents)
+    NamedTuple{parent_names}(parents)
+end
+
+parents(graph::SequentializedGraph{names}, nodes::AbstractNode...) where {names} =
+    reduce(nodes; init=(;)) do accumulated, node
+        nt = parents(graph, nodename(node))
+        # Merge only nodes which are not present in the evaluation model yet
+        diff_nt = Base.structdiff(nt, accumulated)
+        merge(accumulated, diff_nt)
+    end

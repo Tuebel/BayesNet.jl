@@ -52,6 +52,5 @@ SAMPLE_SIZE = ((), (1,), (5,), (5, 6))
     ℓ_likel = logdensityof(c(sample_N[(:a, :b)]), reshape(data, 2, ntuple(_ -> 1, length(sample_size))..., data_size...))
     dropdims = (length(size(ℓ_likel))+1-length(data_size):length(size(ℓ_likel))...,)
     ℓ_likel = sum_and_dropdims(ℓ_likel, dropdims)
-    ℓ_likel
     @test logdensityof(model, sample_N) ≈ ℓ_prior .+ ℓ_likel
 end;
