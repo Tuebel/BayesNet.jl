@@ -57,6 +57,7 @@ function node_logdensityof(node::ObservationNode{<:Any,child_names,<:ModifierNod
     # BUG breaks if modifier wraps modifier
     modifier_node = node.wrapped_node
     internal_node = modifier_node.wrapped_node
+    # This is from ModifierNode.jl but init node without calling childvalues and using the observation
     wrapped_ℓ = logdensityof(internal_node(values(variables[child_names])...), node.observation)
     logdensityof(modifier_node(variables), node.observation, wrapped_ℓ)
 end
