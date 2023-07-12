@@ -15,8 +15,8 @@ cpurng = Random.default_rng()
 Random.seed!(cpurng, 42)
 curng = CUDA.default_rng()
 Random.seed!(curng, 42)
-# TODO replace in test files
-# rngs = [cpurng]
+# replace in test files
+# rngs = (cpurng,)
 rngs = (cpurng, curng)
 
 CUDA.allowscalar(false)

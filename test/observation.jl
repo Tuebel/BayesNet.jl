@@ -11,15 +11,23 @@ using Test
 DATA_SIZES = ((), (1,), (3,), (3, 4))
 SAMPLE_SIZE = ((), (1,), (5,), (5, 6))
 
+# Minimal implementation to test whether the values get modified and the rest of the graph is traversed
+struct TwoModifierModel end
+# Construct with same args as wrapped model
+TwoModifierModel(args...) = TwoModifierModel()
+Base.rand(::AbstractRNG, model::TwoModifierModel, value) = 2 * value
+DensityInterface.logdensityof(::TwoModifierModel, ::Any, ℓ) = 2 * ℓ
+
 @testset "ObservationNode, RNG: $rng, DATA_SIZE: $data_size, SAMPLE_SIZE: $sample_size" for rng in rngs, data_size in DATA_SIZES, sample_size in SAMPLE_SIZE
     a = BroadcastedNode(:a, rng, KernelNormal, 1.0f0, 2.0f0)
     b = BroadcastedNode(:b, rng, KernelExponential, array_for_rng(rng)([1.0f0, 2.0f0]))
     c = BroadcastedNode(:c, rng, KernelNormal, (a, b))
+    c_mod = ModifierNode(c, rng, TwoModifierModel)
 
     # Condition on data, aka override the randomly generated values with the observed ones
     data = rand(rng, BroadcastedDistribution(KernelNormal, 0, array_for_rng(rng)([2.0f0, 3.0f0])), data_size...)
     @test size(data) == (2, data_size...)
-    c_obs = c | data
+    c_obs = c_mod | data
     model = sequentialize(c_obs)
 
     # Type stable rand with correct values and dimensions
@@ -34,7 +42,7 @@ SAMPLE_SIZE = ((), (1,), (5,), (5, 6))
     @test sample_N.b isa AbstractArray{Float32,length(sample_size) + 1}
     @test size(sample_N.b) == (2, sample_size...)
     # Sanity counter example
-    sample_c = rand(c)
+    sample_c = rand(c_mod)
     @test sample_c.c != data
 
     # Type stable logdensityof with correct values and dimensions
@@ -48,8 +56,8 @@ SAMPLE_SIZE = ((), (1,), (5,), (5, 6))
     # Compare to unmodified version adds the prior probability to each likelihood value
     # However, the prior should only be added once - more data → less influence of prior
     ℓ_prior = logdensityof(a, sample_N) + logdensityof(b, sample_N)
-    # TODO sort out reduction dims
-    ℓ_likel = logdensityof(c(sample_N[(:a, :b)]), reshape(data, 2, ntuple(_ -> 1, length(sample_size))..., data_size...))
+    # modifier: 2 * ℓ
+    ℓ_likel = 2 * logdensityof(c(sample_N[(:a, :b)]), reshape(data, 2, ntuple(_ -> 1, length(sample_size))..., data_size...))
     dropdims = (length(size(ℓ_likel))+1-length(data_size):length(size(ℓ_likel))...,)
     ℓ_likel = sum_and_dropdims(ℓ_likel, dropdims)
     @test logdensityof(model, sample_N) ≈ ℓ_prior .+ ℓ_likel

@@ -2,7 +2,7 @@
 # Copyright (c) 2022, Institute of Automatic Control - RWTH Aachen University
 # All rights reserved.
 
-# TODO not intuitive, it is probably easier to implement your own node similar to the ObservationNode
+# TODO not intuitive, makes the ObservationNode hacky and I would like to get rid of it.
 
 """
     ModifierNode
@@ -11,7 +11,7 @@ For the model create a new type e.g. ModifierModel and implement:
 * `rand(rng,::AbstractRNG, model::ModifierModel, x)`, where `x` is a randomly drawn value from the wrapped node.
 * `logdensityof(model::ModifierModel, x, ℓ)`, where `x` is the value of the evaluated variable and `ℓ` the logdensity returned by the wrapped model
 
-When traversing the graph, only the wrapped node is returned. 
+When traversing the graph, the children of the wrapped node are returned. 
 """
 struct ModifierNode{name,child_names,N<:AbstractNode{name,child_names},R<:AbstractRNG,M} <: AbstractNode{name,child_names}
     wrapped_node::N
@@ -19,7 +19,10 @@ struct ModifierNode{name,child_names,N<:AbstractNode{name,child_names},R<:Abstra
     model::M
 end
 
-children(node::ModifierNode) = (node.wrapped_node,)
+# Forward methods to wrapped node
+children(node::ModifierNode) = children(node.wrapped_node)
+childvalues(node::ModifierNode, nt::NamedTuple) = childvalues(node.wrapped_node, nt)
+model_dims(node::ModifierNode) = model_dims(node.wrapped_node)
 
 function rand_barrier(node::ModifierNode, variables::NamedTuple, dims...)
     wrapped_value = rand_barrier(node.wrapped_node, variables, dims...)
