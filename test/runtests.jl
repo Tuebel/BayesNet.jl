@@ -17,7 +17,7 @@ curng = CUDA.default_rng()
 Random.seed!(curng, 42)
 # TODO replace in test files
 # rngs = [cpurng]
-rngs = [cpurng, curng]
+rngs = (cpurng, curng)
 
 CUDA.allowscalar(false)
 
