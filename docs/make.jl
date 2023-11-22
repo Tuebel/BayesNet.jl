@@ -3,5 +3,6 @@
 # All rights reserved. 
 
 using Documenter, BayesNet
+import Documenter.Remotes: GitLab
 
-makedocs(sitename="BayesNet")
+makedocs(sitename="BayesNet", repo=GitLab("git-ce.rwth-aachen.de", "diss", "bayesnet.jl"))
