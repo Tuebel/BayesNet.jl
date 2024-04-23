@@ -21,7 +21,6 @@ logdensityof_barrier(node::YourNode, variables::NamedTuple)
 bijector_barrier(node::YourNode, variables::NamedTuple)
 ```
 
-
 # Naming Convention
 Naming of parent-child relationship is reversed in a Bayesian network compared to DAGs.
 The probability of a child variable ``y`` given a parent variable ``x`` is ``p(y|x)``.
