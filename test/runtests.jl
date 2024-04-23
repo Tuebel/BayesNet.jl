@@ -13,11 +13,14 @@ using Test
 # Setup a list of rngs to loop over
 cpurng = Random.default_rng()
 Random.seed!(cpurng, 42)
-curng = CUDA.default_rng()
-Random.seed!(curng, 42)
-# replace in test files
-# rngs = (cpurng,)
-rngs = (cpurng, curng)
+if CUDA.functional()
+    # Use CUDA only if available
+    curng = CUDA.default_rng()
+    Random.seed!(curng, 42)
+    rngs = (cpurng, curng)
+else
+    rngs = (cpurng,)
+end
 
 CUDA.allowscalar(false)
 
