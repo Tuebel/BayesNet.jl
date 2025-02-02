@@ -2,3 +2,6 @@
 BayesNet = "d9c86ec7-3148-4780-bde1-0046e5c48677"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 KernelDistributions = "9994844f-d2c8-4ad1-b0b3-ac5ee308e667"
+
+[sources]
+KernelDistributions = {url="https://github.com/rwth-irt/KernelDistributions.jl"}
