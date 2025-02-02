@@ -1,7 +1,7 @@
 name = "BayesNet"
 uuid = "d9c86ec7-3148-4780-bde1-0046e5c48677"
 authors = ["Tim Redick <t.redick@irt.rwth-aachen.de>"]
-version = "0.2.9"
+version = "0.2.10"
 
 [deps]
 Bijectors = "76274a88-744f-5084-9051-94815aaf08c4"
@@ -15,6 +15,9 @@ Unrolled = "9602ed7d-8fef-5bc8-8597-8f21381861e8"
 CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
 LocalCoverage = "5f6e1e16-694c-5876-87ef-16b5274f298e"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[sources]
+KernelDistributions = {url="https://github.com/rwth-irt/KernelDistributions.jl"}
 
 [targets]
 test = ["CUDA", "LocalCoverage", "Test"]
