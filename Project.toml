@@ -17,7 +17,7 @@ LocalCoverage = "5f6e1e16-694c-5876-87ef-16b5274f298e"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [sources]
-KernelDistributions = {url="https://github.com/rwth-irt/KernelDistributions.jl"}
+KernelDistributions = {url="https://github.com/Tuebel/KernelDistributions.jl"}
 
 [targets]
 test = ["CUDA", "LocalCoverage", "Test"]

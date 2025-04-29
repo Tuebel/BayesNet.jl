@@ -6,4 +6,4 @@ using Documenter, BayesNet
 import Documenter.Remotes: GitLab
 
 makedocs(sitename="BayesNet")
-deploydocs(repo="github.com/rwth-irt/BayesNet.jl.git")
+deploydocs(repo="github.com//BayesNet.jl.git")
